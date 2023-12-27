@@ -1,0 +1,50 @@
+{
+  "name": "lighthouse-simple-cli",
+  "version": "0.0.1",
+  "description": "Get lighthouse testing data easier.",
+  "homepage": "https://github.com/aidenchen8/lighthouse-simple-cli",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "lighthouse-simple": "dist/index.js"
+  },
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "dev": "node ./dist/index.js",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+  },
+  "dependencies": {
+    "chrome-launcher": "^1.1.0",
+    "commander": "^11.0.0",
+    "fs-extra": "^11.1.1",
+    "lighthouse": "^11.4.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-terser": "^0.4.3",
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^20.10.5",
+    "@typescript-eslint/eslint-plugin": "6.4.0",
+    "@typescript-eslint/parser": "6.4.0",
+    "eslint": "^8.49.0",
+    "eslint-config-alloy": "^5.1.2",
+    "prettier": "^3.0.3",
+    "rollup": "^4.9.1",
+    "rollup-plugin-cleandir": "^2.0.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aidenchen8/lighthouse-simple-cli.git"
+  },
+  "keywords": [
+    "cli",
+    "lighthouse"
+  ],
+  "author": "aidenchen8",
+  "maintainers": [
+    "aidenchen8"
+  ],
+  "packageManager": "pnpm@8.12.1"
+}
