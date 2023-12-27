@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import lighthouse from 'lighthouse';
 import { resolve } from 'path';
+import fs from 'fs';
 import * as chromeLauncher from 'chrome-launcher';
 import pkg from '../package.json';
 import desktopConfig from './config/desktop-default';
@@ -16,14 +17,14 @@ program
     'what type of device is been testing, [string] [choices: "mobile", "desktop"]',
     'desktop',
   )
-  .option('-q, --quick <bool>', `quick test`, false)
+  .option('-q, --quick', `quick test`, false)
   .option(
     '-o, --output <char...>',
     `Reporter for the results, supports multiple values. choices: "json", "html", "csv"`,
     ['html', 'json', 'csv'],
   )
   .option('-p, --output-path <char>', `The file path to output the results.`)
-  .option('-v, --view <bool>', `Open HTML report in your browser`, false)
+  .option('-v, --view', `Open HTML report in your browser`, false)
   .option('-t, --times <number>', `test times`);
 
 // program
@@ -52,6 +53,8 @@ if (options.type === 'mobile') {
 if (options.quick) {
   config.onlyAudits = quickTestAudits;
 }
+// set output
+config.settings.output = options.output
 
 // Step 1: 启动 Chrome
 const chrome = await chromeLauncher.launch({
@@ -64,7 +67,29 @@ lighthouse(
     logLevel: 'info',
     port: chrome.port,
   },
-  { ...config, outputPath: resolve(process.cwd(), options.outputPath || '') },
-).catch((e) => {
-  console.error('[Lighthouse Error]:', e);
-});
+  config,
+)
+  .then((res) => {
+    if (res?.report) {
+      const outputPath = resolve(process.cwd(), options.outputPath || '')
+      if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true });
+      }
+
+      let index =0
+      for(const fileType of config.settings.output) {
+        const filePath = resolve(outputPath, `${url.replace(pattern, '')}__report.${fileType}`)
+        fs.writeFileSync(
+          filePath,
+          res?.report[index],
+        );
+        index++
+      }
+    }
+  })
+  .catch((e) => {
+    console.error('[Lighthouse Error]:', e);
+  })
+  .finally(() => {
+    chrome.kill();
+  });
